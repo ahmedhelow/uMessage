@@ -20,15 +20,13 @@ public class MinFourHeapComparable<E extends Comparable<E>> extends PriorityWork
     public MinFourHeapComparable() {
         this.size=0;
         this.capacity=10;
-        this.data = (E[]) new Object[capacity];
-
-
+        this.data = (E[]) new Comparable[capacity];
     }
 
     @Override
     public boolean hasWork() {
 
-        if(size>=0){
+        if(size>0){
             return true;
         }
         return false;
@@ -94,7 +92,7 @@ public class MinFourHeapComparable<E extends Comparable<E>> extends PriorityWork
 
     @Override
     public void clear() {
-        E[] temp = (E[]) new Object[capacity];
+        E[] temp = (E[]) new Comparable[capacity];
         this.data= temp;
         this.size=0;
     }
