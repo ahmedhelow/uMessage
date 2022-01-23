@@ -40,7 +40,7 @@ public class MinFourHeapComparable<E extends Comparable<E>> extends PriorityWork
             this.data= Arrays.copyOf(data, capacity*2);
             this.capacity*=2;
         }
-         this.data[size]=work;
+        this.data[size]=work;
         this.size++;
         int index = size-1;
         while (Math.ceil((index-4.0)/4.0) >=0 && data[(int) Math.ceil((index-4.0)/4.0)].compareTo(data[(int) index]) >0){
@@ -54,25 +54,48 @@ public class MinFourHeapComparable<E extends Comparable<E>> extends PriorityWork
     @Override
     public E peek() {
         if (!hasWork()) throw new NoSuchElementException();
-        E item= this.data[0];
-        this.data[0]=data[size-1];
-        this.data[size-1]=null;
-        this.size--;
-        return item;
+        return this.data[0];
     }
 
     @Override
     public E next() {
-        throw new NotYetImplementedException();
+        if (!hasWork()) throw new NoSuchElementException();
+        E item= this.data[0];
+        this.data[0]=data[size-1];
+        this.data[size-1]=null;
+        this.size--;
+        int index = 0;
+        while ((4*index)+1<size){
+            int smallestIndex = (4*index)+1;
+            if ((4*index)+2<size) {
+                if (data[(4*index)+2].compareTo(data[smallestIndex]) <0) smallestIndex = (4 * index) + 2;
+                if ((4*index)+3<size){
+                    if (data[(4*index)+3].compareTo(data[smallestIndex]) <0) smallestIndex = (4 * index) + 3;
+                    if ((4*index)+4<size){
+                        if (data[(4*index)+4].compareTo(data[smallestIndex]) <0) smallestIndex=(4*index)+4;
+                    }
+                }
+            }
+            if (data[index].compareTo(data[smallestIndex])<0) break;
+            else {
+                E temp = data[index];
+                data[index] = data[smallestIndex];
+                data[smallestIndex]=temp;
+            }
+            index=smallestIndex;
+        }
+        return item;
     }
 
     @Override
     public int size() {
-        throw new NotYetImplementedException();
+        return this.size;
     }
 
     @Override
     public void clear() {
-        throw new NotYetImplementedException();
+        E[] temp = (E[]) new Object[capacity];
+        this.data= temp;
+        this.size=0;
     }
 }
