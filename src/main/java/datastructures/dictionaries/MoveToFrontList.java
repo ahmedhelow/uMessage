@@ -43,16 +43,33 @@ public class MoveToFrontList<K, V> extends DeletelessDictionary<K, V> {
     @Override
     public V insert(K key, V value) {
         if (key==null || value==null) throw new IllegalArgumentException();
-
-
-
-
+        ListNode<K,V> temp = new ListNode<>(key,value);
+        if (size==0) {
+            head = tail = temp;
+            this.size++;
+            return value;
+        }
+        else {
+            V findValue= this.find(key);
+            if (findValue ==null){
+                temp.next=this.head;
+                this.head=temp;
+                this.size++;
+                return null;
+            }
+            else {
+                this.head.value=value;
+                this.size++;
+                return findValue;
+            }
+        }
     }
 
     @Override
     public V find(K key) {
 
-        throw new NotYetImplementedException();
+        if (key==null) throw new IllegalArgumentException();
+
     }
 
     @Override
