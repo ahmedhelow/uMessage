@@ -20,18 +20,44 @@ import java.util.Iterator;
  * dictionary/list's iterator.
  */
 public class MoveToFrontList<K, V> extends DeletelessDictionary<K, V> {
+    private int size;
+    private ListNode head, tail;
+
+    public MoveToFrontList(){
+        this.size=0;
+        this.head= new ListNode<>(null,null);
+        this.tail=new ListNode(null,null);
+    }
+
+    public static class ListNode<K,V> {
+        public K key;
+        public V value;
+        public ListNode<K,V> next;
+        ListNode(K key, V value){
+            this.key=key;
+            this.value=value;
+            this.next=null;
+        }
+    }
+
     @Override
     public V insert(K key, V value) {
-        throw new NotYetImplementedException();
+        if (key==null || value==null) throw new IllegalArgumentException();
+
+
+
+
     }
 
     @Override
     public V find(K key) {
+
         throw new NotYetImplementedException();
     }
 
     @Override
     public Iterator<Item<K, V>> iterator() {
+
         throw new NotYetImplementedException();
     }
 }
