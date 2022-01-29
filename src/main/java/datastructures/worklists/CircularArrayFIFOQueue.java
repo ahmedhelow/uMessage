@@ -3,55 +3,98 @@ package datastructures.worklists;
 import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.worklists.FixedSizeFIFOWorkList;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  * See cse332/interfaces/worklists/FixedSizeFIFOWorkList.java
  * for method specifications.
  */
-public class CircularArrayFIFOQueue<E> extends FixedSizeFIFOWorkList<E> {
+public class CircularArrayFIFOQueue<E extends Comparable<E>> extends FixedSizeFIFOWorkList<E> {
+    int front;
+    int size;
+    E[] array;
+    @SuppressWarnings("unchecked")
     public CircularArrayFIFOQueue(int capacity) {
         super(capacity);
-        throw new NotYetImplementedException();
+        this.size = 0;
+        this.front = 0;
+        array = (E[]) new Comparable[capacity];
+
     }
 
     @Override
     public void add(E work) {
-        throw new NotYetImplementedException();
+        if(isFull()) throw new IllegalStateException();
+        array[(front+size) % capacity()] = work;
+        size++;
+
     }
 
     @Override
     public E peek() {
-        throw new NotYetImplementedException();
+        if (!hasWork()){
+            throw new NoSuchElementException();
+        }
+        return array[front];
     }
 
     @Override
     public E peek(int i) {
-        throw new NotYetImplementedException();
+        if(!hasWork()){
+            throw new NoSuchElementException();
+        }if(i<0 || i >= size){
+            throw new IndexOutOfBoundsException();
+        }
+        return array[(front + i) % capacity()];
     }
 
     @Override
     public E next() {
-        throw new NotYetImplementedException();
+        E temp = this.peek();
+        front = (front + 1) % capacity();
+        size--;
+        return temp;
     }
 
     @Override
     public void update(int i, E value) {
-        throw new NotYetImplementedException();
+        if(!hasWork()){
+            throw new NoSuchElementException();
+        }if(i<0 || i >= size){
+            throw new IndexOutOfBoundsException();
+        }
+        array[(front + i) % capacity()] = value;
     }
 
     @Override
     public int size() {
-        throw new NotYetImplementedException();
+        return this.size;
     }
 
     @Override
     public void clear() {
-        throw new NotYetImplementedException();
+        this.size = 0;
+        this.front = 0;
     }
 
     @Override
     public int compareTo(FixedSizeFIFOWorkList<E> other) {
-        // You will implement this method in project 2. Leave this method unchanged for project 1.
-        throw new NotYetImplementedException();
+        Iterator<E> i  = this.iterator();
+        Iterator<E> i2  = other.iterator();
+        int i_size = this.size();
+        int i2_size = other.size();
+
+        int limit = Math.min(i_size,i2_size);
+
+
+        for (int j = 0; j < limit; j++) {
+            int diff = i.next().compareTo(i2.next());
+            if (diff != 0) {
+                return diff;
+            }
+        }
+        return i_size - i2_size;
     }
 
     @Override
@@ -63,12 +106,10 @@ public class CircularArrayFIFOQueue<E> extends FixedSizeFIFOWorkList<E> {
         } else if (!(obj instanceof FixedSizeFIFOWorkList<?>)) {
             return false;
         } else {
-            // Uncomment the line below for p2 when you implement equals
-            // FixedSizeFIFOWorkList<E> other = (FixedSizeFIFOWorkList<E>) obj;
+            FixedSizeFIFOWorkList<E> other = (FixedSizeFIFOWorkList<E>) obj;
 
-            // Your code goes here
+            return this.compareTo(other) == 0;
 
-            throw new NotYetImplementedException();
         }
     }
 
