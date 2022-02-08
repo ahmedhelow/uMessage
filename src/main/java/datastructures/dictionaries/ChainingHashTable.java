@@ -25,23 +25,67 @@ import java.util.function.Supplier;
  */
 public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
     private Supplier<Dictionary<K, V>> newChain;
+    private Dictionary<K, V> [] table;
+    private static final int[] DEFAULT_SIZES = {83,167,311,613,1259,2557,5273,10163,20753,40993,80713,160019,321247,630473,1240793};
+    private int sizeInd =0;
 
     public ChainingHashTable(Supplier<Dictionary<K, V>> newChain) {
+
         this.newChain = newChain;
+        this.size=0;
+        this.table = (Dictionary<K,V>[]) new Dictionary[DEFAULT_SIZES[this.sizeInd]];
+
     }
 
     @Override
     public V insert(K key, V value) {
-        throw new NotYetImplementedException();
+        if (value == null){
+            throw new IllegalArgumentException();
+        }
+        int lFactor = this.size/this.table.length;
+        if (lFactor >=2){
+
+        }
     }
 
     @Override
     public V find(K key) {
-        throw new NotYetImplementedException();
+        Dictionary<K,V> temp = DictionaryAtIndex(key);
+        return temp.find(key);
     }
 
     @Override
     public Iterator<Item<K, V>> iterator() {
         throw new NotYetImplementedException();
     }
+
+    private Dictionary<K, V> DictionaryAtIndex(K key){
+        if (key == null) throw new IllegalArgumentException();
+        int HC = key.hashCode();
+        Dictionary<K, V> current = this.table[HC % table.length];
+
+        if (current == null){
+            current = newChain.get();
+            table[HC % table.length] = current;
+        }
+        return current;
+    }
+    private void resize(){
+        int size2;
+        if (sizeInd < DEFAULT_SIZES.length-1){
+            sizeInd++;
+            size2= DEFAULT_SIZES[sizeInd];
+        }
+        else size2 = (17*(table.length-1))/8;
+        Dictionary<K,V>[] temp = table;
+        table = new Dictionary[size2];
+        this.size=0;
+        for (int i = 0; i < temp.length ; i++) {
+            if (temp != null){
+
+            }
+        }
+    }
+
+
 }

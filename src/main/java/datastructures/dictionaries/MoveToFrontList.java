@@ -27,7 +27,7 @@ public class MoveToFrontList<K, V> extends DeletelessDictionary<K, V> {
     public MoveToFrontList() {
         this.size = 0;
         this.head = new ListNode<>(null, null);
-//        this.tail=new ListNode(null,null);
+//
     }
 
     public static class ListNode<K, V> {
@@ -70,7 +70,6 @@ public class MoveToFrontList<K, V> extends DeletelessDictionary<K, V> {
         if (key == null) throw new IllegalArgumentException();
 
         if (this.size == 0) return null;
-//        if (this.size == 1 && head.key.equals(key)) return (V) head.value;
 
         ListNode preNode = null;
         ListNode currentNode = this.head;
