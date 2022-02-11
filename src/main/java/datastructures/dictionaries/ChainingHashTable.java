@@ -4,8 +4,10 @@ import cse332.datastructures.containers.Item;
 import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.misc.DeletelessDictionary;
 import cse332.interfaces.misc.Dictionary;
+import cse332.interfaces.misc.SimpleIterator;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 /**
@@ -48,9 +50,9 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
 
         }
         Dictionary<K,V> temp = DictionaryAtIndex(key);
-        V ret = temp.insert(key, value);
-        if (ret==null) size++;
-        return ret;
+        V Return = temp.insert(key, value);
+        if (Return==null) size++;
+        return Return;
     }
 
     @Override
@@ -61,7 +63,54 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
 
     @Override
     public Iterator<Item<K, V>> iterator() {
-        throw new NotYetImplementedException();
+        return (Iterator<Item<K, V>>) new TableIterator();
+    }
+
+    private class TableIterator extends SimpleIterator<Item<K, V>> {
+        private int currIndex;
+        private Iterator<Item<K,V>> currIterator;
+
+        public TableIterator() {
+            this.currIndex = -1;
+            this.currIterator = getNextIterator();
+        }
+
+        /**
+         * Find next valid iterator, or return null if we have exhausted the table
+         *
+         * @return The next iterator
+         */
+        public Iterator<Item<K,V>> getNextIterator() {
+            Dictionary<K,V> currDict = null;
+            while ((currDict == null || currDict.size() == 0) && ++this.currIndex < ChainingHashTable.this.table.length) { // Find next valid index in the table
+                currDict = ChainingHashTable.this.table[this.currIndex];
+            }
+
+            if (currDict != null) {
+                return currDict.iterator();
+            }
+
+            return null;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return this.currIterator != null;
+        }
+
+        @Override
+        public Item<K, V> next() {
+
+            if (!this.hasNext()) throw new NoSuchElementException();
+
+            Item<K,V> next = this.currIterator.next();
+
+            if (!this.currIterator.hasNext()) {
+                this.currIterator = this.getNextIterator();
+            }
+
+            return next;
+        }
     }
 
     private Dictionary<K, V> DictionaryAtIndex(K key){
@@ -81,12 +130,17 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
             sizeInd++;
             size2= DEFAULT_SIZES[sizeInd];
         }
-        else size2 = (17*(table.length-1))/8;
+        else size2 = (2*(table.length-1));
         Dictionary<K,V>[] temp = table;
         table = new Dictionary[size2];
         this.size=0;
         for (int i = 0; i < temp.length ; i++) {
-            if (temp != null){
+            if (temp[i] !=null){
+                Iterator<Item<K,V>> iterator = temp[i].iterator();
+                while (iterator.hasNext()){
+                    Item<K,V> e = iterator.next();
+                    insert(e.key, e.value);
+                }
 
             }
         }
