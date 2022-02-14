@@ -4,6 +4,7 @@ import cse332.datastructures.containers.Item;
 import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.trie.TrieMap;
 import cse332.types.BString;
+import datastructures.worklists.ArrayStack;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -23,33 +24,27 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
         }
 
         public HashTrieNode(V value) {
-            this.pointers = new ChainingHashTable<>(() -> new MoveToFrontList<>());
+            this.pointers = new ChainingHashTable<>(MoveToFrontList::new);
 
             this.value = value;
         }
 
         @Override
         public Iterator<Entry<A, HashTrieNode>> iterator() {
-            Iterator<Item<A, HashTrieNode>> it = pointers.iterator();
-            Iterator<Entry<A, HashTrieNode>> it1 = new Iterator<Entry<A, HashTrieNode>>() {
-                public boolean hasNext() {
-                    return it.hasNext();
-                }
-                public Entry<A, HashTrieNode> next() {
-                    Item<A, HashTrieNode> i = it.next();
-                    K key = (K) i.key;
-                    V value = (V) i.value;
-                    Entry<A, HashTrieNode> e = new AbstractMap.SimpleEntry(key, value);
-                    return e;
-                }
-            };
-            return it1;
+            Iterator<Item<A, HashTrieNode>> pIt = pointers.iterator();
+            ArrayStack<Entry<A,HashTrieNode>> stack = new ArrayStack<>();
+            while(pIt.hasNext()){
+                Item<A, HashTrieNode> temp = pIt.next();
+                stack.add(new AbstractMap.SimpleEntry<A, HashTrieNode>(temp.key, temp.value));
+            }
+            return stack.iterator();
         }
     }
 
     public HashTrieMap(Class<K> KClass) {
         super(KClass);
         this.root = new HashTrieNode();
+        this.size = 0;
     }
 
     @Override
@@ -71,7 +66,7 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
         }
         V past = curr.value;
         if(past == null){
-            size ++;
+            this.size ++;
         }
         curr.value = value;
         return past;
@@ -81,9 +76,6 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
     public V find(K key) {
         if(key == null){
             throw new IllegalArgumentException();
-        }
-        if(size == 0){
-            return null;
         }
         HashTrieNode curr = (HashTrieNode) this.root;
 
@@ -123,7 +115,8 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
 
     @Override
     public void delete(K key) {
-        throw new NotYetImplementedException();
+        throw new UnsupportedOperationException();
+
     }
 
     @Override
