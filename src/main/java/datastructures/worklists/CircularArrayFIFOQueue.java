@@ -119,7 +119,6 @@ public class CircularArrayFIFOQueue<E extends Comparable<E>> extends FixedSizeFI
         for (int i = 0; i < size; i++) {
             int elementHc = this.peek(i).hashCode();
             HC = 11*HC + elementHc;
-
         }
         return HC;
 
