@@ -1,7 +1,7 @@
 package datastructures.dictionaries;
 
+import com.sun.source.tree.BreakTree;
 import cse332.datastructures.containers.Item;
-import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.misc.DeletelessDictionary;
 import cse332.interfaces.misc.Dictionary;
 import cse332.interfaces.misc.SimpleIterator;
@@ -27,8 +27,8 @@ import java.util.function.Supplier;
  */
 public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
     private Supplier<Dictionary<K, V>> newChain;
-    private Dictionary<K, V> [] table;
     private static final int[] DEFAULT_SIZES = {97,197,397,797,1579,3163,6311,12611,25219,50441,100907,201731,403483,806917,1299827};
+    private Dictionary<K, V> [] table;
     private int sizeInd =0;
 
     public ChainingHashTable(Supplier<Dictionary<K, V>> newChain) {
@@ -47,9 +47,8 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
         int lFactor = this.size/this.table.length;
         if (lFactor >=2){
             resize();
-
         }
-        Dictionary<K,V> temp = DictionaryAtIndex(key);
+        Dictionary<K,V> temp = ValueAtIndex(key);
         V Return = temp.insert(key, value);
         if (Return==null) size++;
         return Return;
@@ -57,63 +56,51 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
 
     @Override
     public V find(K key) {
-        Dictionary<K,V> temp = DictionaryAtIndex(key);
+        Dictionary<K,V> temp = ValueAtIndex(key);
         return temp.find(key);
+
     }
 
     @Override
     public Iterator<Item<K, V>> iterator() {
-        return (Iterator<Item<K, V>>) new TableIterator();
+        if (table[0] == null) table[0] = newChain.get();
+        Iterator<Item<K,V>> iterator = new Iterator<Item<K, V>>() {
+            private int Index=0;
+
+
+            public Iterator<Item<K,V>> getNextIte() {
+                Dictionary<K,V> current = null;
+                while ((current == null || current.size() == 0) && (Index < ChainingHashTable.this.table.length)) {
+                    current = ChainingHashTable.this.table[this.Index];
+                    Index++;
+                }
+
+                if (current != null) return current.iterator();
+
+                return null;
+            }
+
+            Iterator<Item<K,V>> TempHash = getNextIte();
+            @Override
+            public boolean hasNext() {
+                return TempHash!=null;
+            }
+
+            @Override
+            public Item<K, V> next() {
+                if (hasNext() == false){
+                    throw new NoSuchElementException();
+                }
+                Item<K,V> nextItem = TempHash.next();
+                if (TempHash.hasNext()==false) TempHash = getNextIte();
+                return nextItem;
+            }
+
+        };
+        return iterator;
     }
 
-    private class TableIterator extends SimpleIterator<Item<K, V>> {
-        private int currIndex;
-        private Iterator<Item<K,V>> currIterator;
-
-        public TableIterator() {
-            this.currIndex = -1;
-            this.currIterator = getNextIterator();
-        }
-
-        /**
-         * Find next valid iterator, or return null if we have exhausted the table
-         *
-         * @return The next iterator
-         */
-        public Iterator<Item<K,V>> getNextIterator() {
-            Dictionary<K,V> currDict = null;
-            while ((currDict == null || currDict.size() == 0) && ++this.currIndex < ChainingHashTable.this.table.length) { // Find next valid index in the table
-                currDict = ChainingHashTable.this.table[this.currIndex];
-            }
-
-            if (currDict != null) {
-                return currDict.iterator();
-            }
-
-            return null;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return this.currIterator != null;
-        }
-
-        @Override
-        public Item<K, V> next() {
-
-            if (!this.hasNext()) throw new NoSuchElementException();
-
-            Item<K,V> next = this.currIterator.next();
-
-            if (!this.currIterator.hasNext()) {
-                this.currIterator = this.getNextIterator();
-            }
-
-            return next;
-        }
-    }
-
-    private Dictionary<K, V> DictionaryAtIndex(K key){
+    private Dictionary<K, V> ValueAtIndex(K key){
         if (key == null) throw new IllegalArgumentException();
         int HC = key.hashCode();
         Dictionary<K, V> current = this.table[HC % table.length];
@@ -138,13 +125,11 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
             if (temp[i] !=null){
                 Iterator<Item<K,V>> iterator = temp[i].iterator();
                 while (iterator.hasNext()){
-                    Item<K,V> e = iterator.next();
-                    insert(e.key, e.value);
+                    Item<K,V> item = iterator.next();
+                    insert(item.key, item.value);
                 }
 
             }
         }
     }
-
-
 }
