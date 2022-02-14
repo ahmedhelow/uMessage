@@ -41,7 +41,7 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
 
     @Override
     public V insert(K key, V value) {
-        if (value == null){
+        if (key == null || value == null){
             throw new IllegalArgumentException();
         }
         int lFactor = this.size/this.table.length;
@@ -118,6 +118,8 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
             size2= DEFAULT_SIZES[sizeInd];
         }
         else size2 = (2*(table.length-1));
+
+
         Dictionary<K,V>[] temp = table;
         table = new Dictionary[size2];
         this.size=0;
