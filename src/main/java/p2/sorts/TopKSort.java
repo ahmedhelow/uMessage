@@ -34,7 +34,6 @@ public class TopKSort {
             }
             for (int i = k; i<array.length; i++) {
                 array[i] = null;}
-
         }
     }
 
