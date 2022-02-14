@@ -30,7 +30,6 @@ public class TopKSort {
                     array[i] = heap.next();
                 }
                 else throw new IllegalArgumentException();
-
             }
             for (int i = k; i<array.length; i++) {
                 array[i] = null;}

@@ -34,9 +34,9 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
     public ChainingHashTable(Supplier<Dictionary<K, V>> newChain) {
 
         this.newChain = newChain;
+        this.sizeInd=0;
         this.size=0;
         this.table = (Dictionary<K,V>[]) new Dictionary[DEFAULT_SIZES[this.sizeInd]];
-
     }
 
     @Override
@@ -58,7 +58,6 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
     public V find(K key) {
         Dictionary<K,V> temp = ValueAtIndex(key);
         return temp.find(key);
-
     }
 
     @Override
@@ -103,11 +102,13 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
     private Dictionary<K, V> ValueAtIndex(K key){
         if (key == null) throw new IllegalArgumentException();
         int HC = key.hashCode();
-        Dictionary<K, V> current = this.table[HC % table.length];
+        int Index = HC % table.length;
+        if (Index<0) Index = -1 * Index;
+        Dictionary<K, V> current = this.table[Index];
 
         if (current == null){
             current = newChain.get();
-            table[HC % table.length] = current;
+            table[Index] = current;
         }
         return current;
     }
@@ -117,7 +118,7 @@ public class ChainingHashTable<K, V> extends DeletelessDictionary<K, V> {
             sizeInd++;
             size2= DEFAULT_SIZES[sizeInd];
         }
-        else size2 = (2*(table.length-1));
+        else size2 = (17*(table.length-1)/8);
 
 
         Dictionary<K,V>[] temp = table;
