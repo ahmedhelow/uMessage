@@ -2,7 +2,6 @@ package p2.wordcorrector;
 
 import cse332.types.AlphabeticString;
 import datastructures.dictionaries.HashTrieMap;
-
 public class AutocompleteTrie extends HashTrieMap<Character, AlphabeticString, Integer> {
 
     public AutocompleteTrie() {
@@ -11,27 +10,27 @@ public class AutocompleteTrie extends HashTrieMap<Character, AlphabeticString, I
 
     public String autocomplete(String key) {
         @SuppressWarnings("unchecked")
-        HashTrieNode current = (HashTrieNode) this.root;
+        HashTrieNode curr = (HashTrieNode) this.root;
         for (Character item : key.toCharArray()) {
-            if (current.pointers.find(item) == null) {
+            if (curr.pointers.find(item) == null) {
                 return null;
             }
             else {
-                current = current.pointers.find(item);
+                curr = curr.pointers.find(item);
             }
         }
 
         String result = key;
 
-        while (current.pointers.size() == 1) {
-            if (current.value != null) {
+        while (curr.pointers.size() == 1) {
+            if (curr.value != null) {
                 return null;
             }
-            result += (current.pointers.iterator().next());
-            current = current.pointers.iterator().next().value;
+            result += (curr.pointers.iterator().next());
+            curr = curr.pointers.iterator().next().value;
         }
 
-        if (current.pointers.size() != 0) {
+        if (curr.pointers.size() != 0) {
             return result.toString();
         }
         return result.toString();
