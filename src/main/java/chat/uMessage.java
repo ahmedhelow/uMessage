@@ -20,10 +20,11 @@ import java.util.function.Supplier;
 
 public class uMessage {
     private static final int N = 3;
-    private static final String CORPUS = "corpus/irc.corpus";
-    private static final Supplier<Dictionary<NGram, Dictionary<AlphabeticString, Integer>>> NEW_OUTER =
-            () -> new ChainingHashTable<>(AVLTree::new);
-    private static final Supplier<Dictionary<AlphabeticString, Integer>> NEW_INNER = AVLTree::new;
+    private static String CORPUS = "corpus/irc.corpus";
+    private static Supplier<Dictionary<NGram, Dictionary<AlphabeticString, Integer>>> NEW_OUTER =
+            NGramTester.hashtableConstructor(NGramTester.avlTreeConstructor());
+    private static Supplier<Dictionary<AlphabeticString, Integer>> NEW_INNER =
+            NGramTester.hashtableConstructor(NGramTester.avlTreeConstructor());
 
     /*
      *
