@@ -1,7 +1,9 @@
 package p2.wordcorrector;
 
+import cse332.datastructures.containers.Item;
 import cse332.types.AlphabeticString;
 import datastructures.dictionaries.HashTrieMap;
+
 public class AutocompleteTrie extends HashTrieMap<Character, AlphabeticString, Integer> {
 
     public AutocompleteTrie() {
@@ -10,29 +12,30 @@ public class AutocompleteTrie extends HashTrieMap<Character, AlphabeticString, I
 
     public String autocomplete(String key) {
         @SuppressWarnings("unchecked")
-        HashTrieNode curr = (HashTrieNode) this.root;
+        HashTrieNode current = (HashTrieNode) this.root;
         for (Character item : key.toCharArray()) {
-            if (curr.pointers.find(item) == null) {
-                return null;
+            if ((current.pointers.find(item) != null)) {
+                current = current.pointers.find(item);
+
             }
             else {
-                curr = curr.pointers.find(item);
-            }
+                return null;            }
         }
 
         String result = key;
 
-        while (curr.pointers.size() == 1) {
-            if (curr.value != null) {
-                return null;
+        while (current.pointers.size() == 1) {
+            if (current.value == null) {
+                Item<Character, HashTrieNode> Entry = current.pointers.iterator().next();
+                current = Entry.value;
+                result += Entry.key;
             }
-            result += (curr.pointers.iterator().next());
-            curr = curr.pointers.iterator().next().value;
+            else if (current.value!=null){return null;}
+
         }
 
-        if (curr.pointers.size() != 0) {
-            return result.toString();
-        }
-        return result.toString();
+        if (current.pointers.size() != 0) return result;
+
+        return result;
     }
 }
