@@ -33,8 +33,8 @@ public final class ParseFBMessages {
     //
     // DO NOT PUSH YOUR ME.TXT FILE TO GITLAB. WE DO NOT WANT YOUR PRIVATE CONVERSATIONS!!!!
     public static void main(String[] args) throws IOException {
-        String name = "<Your FB Name>"; // e.g. "Ruth Anderson"
-        String archive = "<Your FB Archive>"; // e.g. "/Users/rea/workspace/332/facebook-rea/messages"
+        String name = "Ahmed W. Helow"; // e.g. "Ruth Anderson"
+        String archive = "C:\\Users\\ahmed\\OneDrive\\Desktop\\facebook-AhmedHelow\\messages"; // e.g. "/Users/rea/workspace/332/facebook-rea/messages"
 
         Stack<String> corpus = new Stack<>();
         File[] listOfFiles = (new File(archive + File.separator + "inbox")).listFiles();
